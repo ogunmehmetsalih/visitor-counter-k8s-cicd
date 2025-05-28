@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Visitor Counter</title>
+</head>
+<body>
+  <h1>👋 Merhaba!</h1>
+  <h2>🔁 Bu sayfa <span id="count">0</span> kez ziyaret edildi.</h2>
+
+  <script>
+    fetch('/count')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('count').textContent = data.count;
+      });
+  </script>
+</body>
+</html>
+
