@@ -2,29 +2,28 @@ pipeline {
   agent any
 
   environment {
-    IMAGE_NAME = "msalihogun/visitor-counter:latest"
-    KUBECONFIG = "${HOME}/.kube/config"
+    DOCKER_IMAGE = 'msalihogun/visitor-counter:latest'
   }
 
   stages {
-    stage('Checkout') {
+    stage('Clone Repo') {
       steps {
-        git url: 'https://github.com/ogunmehmetsalih/visitor-counter-k8s-cicd.git'
+        checkout scm
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t $IMAGE_NAME .'
+        sh 'docker build -t $DOCKER_IMAGE .'
       }
     }
 
-    stage('Push to DockerHub') {
+    stage('Push Docker Image') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            docker push $IMAGE_NAME
+            docker push $DOCKER_IMAGE
           '''
         }
       }
@@ -32,12 +31,10 @@ pipeline {
 
     stage('Deploy to Kubernetes') {
       steps {
-        sh '''
-          kubectl apply -f redis-deployment.yaml
-          kubectl apply -f redis-service.yaml
-          kubectl apply -f frontend-deployment.yaml
-          kubectl apply -f frontend-service.yaml
-        '''
+        sh 'kubectl apply -f redis-deployment.yaml'
+        sh 'kubectl apply -f redis-service.yaml'
+        sh 'kubectl apply -f frontend-deployment.yaml'
+        sh 'kubectl apply -f frontend-service.yaml'
       }
     }
   }
