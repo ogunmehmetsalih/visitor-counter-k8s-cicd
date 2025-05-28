@@ -2,7 +2,8 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_IMAGE = 'msalihogun/visitor-counter:latest'
+    IMAGE_TAG = "v${env.BUILD_NUMBER}"
+    DOCKER_IMAGE = "msalihogun/visitor-counter:${env.IMAGE_TAG}"
   }
 
   stages {

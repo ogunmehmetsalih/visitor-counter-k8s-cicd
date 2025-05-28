@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: visitor
-        image: msalihogun/visitor-counter:latest
+        image: msalihogun/visitor-counter:{{ .IMAGE_TAG }}
+	imagePullPolicy: Always
         ports:
         - containerPort: 3000
-
